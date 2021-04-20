@@ -45,6 +45,7 @@
 (declare-function org-get-deadline-time "ext:org.el")
 (declare-function org-get-heading "ext:org.el")
 (declare-function org-get-scheduled-time "ext:org.el")
+(declare-function org-get-cursor-date "ext:org.el")
 (declare-function org-get-tags "ext:org.el")
 (declare-function org-map-entries "ext:org.el")
 (declare-function org-outline-level "ext:org.el")
@@ -956,8 +957,9 @@ is todays date format."
   "Format agenda entry to show it on dashboard."
   (let* ((schedule-time (org-get-scheduled-time (point)))
          (deadline-time (org-get-deadline-time (point)))
+         (entry-time (org-get-cursor-date))
          (item (org-agenda-format-item
-                (dashboard-agenda-entry-time (or schedule-time deadline-time))
+                (dashboard-agenda-entry-time (or schedule-time deadline-time entry-time))
                 (org-get-heading)
                 (org-outline-level)
                 (org-get-category)
