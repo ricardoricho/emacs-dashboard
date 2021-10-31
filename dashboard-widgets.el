@@ -61,6 +61,7 @@
 (defvar org-agenda-new-buffers)
 (defvar org-agenda-prefix-format)
 (defvar org-agenda-todo-keyword-format)
+(defvar org-indirect-buffer-display)
 (defvar org-todo-keywords-1)
 (defvar all-the-icons-dir-icon-alist)
 (defvar package-activated-list)
@@ -1287,6 +1288,12 @@ Any custom function would receives the tags from `org-get-tags'"
           (function :tag "Custom function"))
   :group 'dashboard)
 
+
+(defcustom dashboard-agenda-action 'dashboard-agenda--default-action
+  "Function to call when hit `RETURN' on top of a agenda entry."
+  :type 'function
+  :group 'dashboard)
+
 (defun dashboard-agenda-entry-format ()
   "Format agenda entry to show it on dashboard.
 Also,it set text properties that latter are used to sort entries and perform different actions."
@@ -1478,11 +1485,27 @@ to compare."
    'agenda
    (dashboard-get-shortcut 'agenda)
    `(lambda (&rest _)
-      (let ((buffer (find-file-other-window (get-text-property 0 'dashboard-agenda-file ,el))))
-        (with-current-buffer buffer
-          (goto-char (get-text-property 0 'dashboard-agenda-loc ,el))
-          (switch-to-buffer buffer))))
+      (let ((file (get-text-property 0 'dashboard-agenda-file ,el))
+            (point (get-text-property 0 'dashboard-agenda-loc ,el)))
+        (funcall dashboard-agenda-action file point)))
    (format "%s" el)))
+
+(defun dashboard-agenda--default-action (file point)
+  "Action on \"agenda-entry\" that is a FILE at POINT.
+Called inside macro insert agenda."
+  (let ((buffer (find-file-noselect file)))
+    (with-current-buffer buffer
+      (goto-char point)
+      (switch-to-buffer buffer))))
+
+(defun dashboard-agenda--indirect-buffer (file point)
+  "Open FILE at POINT using `org-tree-to-indirect-buffer'.
+Called inside macro insert agenda."
+  (let ((buffer (find-file-noselect file)))
+    (with-current-buffer buffer
+      (goto-char point)
+      (setq-local org-indirect-buffer-display 'current-window)
+      (org-tree-to-indirect-buffer))))
 
 ;;
 ;; Registers
