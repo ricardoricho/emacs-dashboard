@@ -1419,7 +1419,7 @@ each agenda entry."
 
 (defcustom dashboard-agenda-tags-format 'identity
   "Function to format the org agenda tags.
-Any custom function would receives the tags from `org-get-tags'"
+Any custom function would receives the local tags from `org-get-tags'"
   :type '(choice
           (const :tag "Show tags" identity)
           (const :tag "Hide tags" ignore)
@@ -1481,9 +1481,9 @@ If not height is found on FACE or `dashboard-items-face' use `default'."
     (format-time-string dashboard-agenda-time-string-format time)))
 
 (defun dashboard-agenda--formatted-tags ()
-  "Apply `dashboard-agenda-tags-format' to org-element tags."
+  "Apply `dashboard-agenda-tags-format' to the list of local `org-get-tags'."
   (when dashboard-agenda-tags-format
-    (funcall dashboard-agenda-tags-format (org-get-tags))))
+    (funcall dashboard-agenda-tags-format (org-get-tags (point) t))))
 
 (defun dashboard-due-date-for-agenda ()
   "Return due-date for agenda period."
