@@ -685,8 +685,7 @@ This code is dynamically generated in `dashboard-insert-shortcut'.")
           (search-backward ,search-label (point-min) t))
         ,@(unless no-next-line '((forward-line 1)))
         (back-to-indentation))
-       (eval-after-load 'dashboard
-         (dashboard--define-shorcut-key-binding ,shortcut-id ,shortcut-char)))))
+       (dashboard--define-shorcut-key-binding ,shortcut-id ,shortcut-char))))
 
 (defun dashboard--define-shorcut-key-binding (section keybinding)
   "Set `cycle-section's function for SECTION to KEYBINDING.
